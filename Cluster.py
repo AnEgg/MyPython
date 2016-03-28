@@ -18,7 +18,7 @@ def get_coauthor():
         author_paper[r[0] - 1][r[2] - 1] = 1
     cur.close()
     conn.close()
-    coauthor = author_paper.dot(author_paper.transpose())
+    coauthor = author_paper.dot(author_paper.T)
     return coauthor
 
 
@@ -57,7 +57,7 @@ def show_clunum(labels):
 
 
 def test():
-    dimen = 2;
+    dimen = 2
     data_red = 1.5 * np.random.randn(500, dimen) + 10
     data_green = np.random.randn(500, dimen) + 10
     data_green.T[0] = data_green.T[0] + 4
@@ -88,11 +88,7 @@ def test():
                         coauthor[i][j] = 2
                     else:
                         coauthor[i][j] = 3
-    for i in np.arange(0, datalen):
-        all_weigh = 0
-        for j in np.arange(0, datalen):
-            all_weigh += coauthor[i][j]
-        coauthor[i][i] = all_weigh
+        coauthor[i][i] = np.sum(coauthor[i])
     # jpc聚类效果
     start = time.clock()
     show_error_count(jpc_julei(coauthor))
@@ -101,6 +97,7 @@ def test():
     start = time.clock()
     show_error_count(pujulei(coauthor))
     print("谱聚类用时" + str(time.clock() - start) + "秒")
+    print(data[0])
     # 图形化展示聚类效果
     # plt.plot(data_red.T[0], data_red.T[1], 'ro', data_green.T[0], data_green.T[1],
     #          'go', data_blue.T[0], data_blue.T[1], 'bo')
@@ -131,10 +128,10 @@ def show_error_count(labels):
 
 
 start = time.clock()
-domain = 3;
+domain = 3
 warnings.filterwarnings("ignore")
-# coau = get_coauthor()
-# show_clunum(jpc_julei(coau))
-# show_clunum(pujulei(coau))
+coau = get_coauthor()
+show_clunum(jpc_julei(coau))
+show_clunum(pujulei(coau))
 test()
 print("总用时" + str(time.clock() - start) + "秒")
